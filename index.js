@@ -125,7 +125,7 @@ app.delete("/api/items/:item_name", (req,res) => {
 // update by id
 app.put("/api/items/:item_id", (req,res) => {
     // I'm too busy right now so here you go
-    res.status(501).send("Not implemented")
+    res.status(501).send("I'm too busy, did not implement")
 })
 
 
