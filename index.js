@@ -29,13 +29,13 @@ const HTTP_PORT = process.env.PORT || 8080;
 
 
 
-// Url endpoints
+
 // Homepage
 app.get("/", (req, res) => {
     res.send("Welcome to the homepage!")
 })
 
-// GET ALL
+// get all items
 app.get("/api/items", (req, res) => {
     Items.find().exec().then(
         (results) => {
@@ -72,6 +72,7 @@ app.get("/api/items/:item_name", (req,res) => {
     ).catch(
         (err) => {
 
+            res.status(404).send({msg:"An error has occured!"})
             console.Console(err)
             
         }
@@ -79,24 +80,24 @@ app.get("/api/items/:item_name", (req,res) => {
    
 })
 
-// Endpoint to insert a item
+// insert an item
 app.post("/api/items", (req, res) => {
-    // 1. GET the body of the request (body of the request = contain the data the user want sto insert)
+    // get the body of the request (body of the request = contain the data the user want sto insert)
     let itemToInsert = req.body
     console.log(`User wants to insert this data: ${itemToInsert.name}`)
 
     // error handling
     // check to see if the body contains a title and descr
     if ("name" in req.body && "rarity" in req.body) {
-        // 2. INSERT it into the data store (append it to my list of movies)
+        // insert it into the data store (append it to my list of movies)
         Items.collection(itemToInsert)
-        // 3. RESPOND with a success / error
+        // respond with a success / error
         res.status(201).send({"msg":"Item successfully inserted!"})
     }
     res.status(401).send({"msg":"Sorry, you are missing a item name or item rarity in your json payload"})    
 })
 
-// endpoint to delete a item
+// delete an item
 app.delete("/api/items/:item_name", (req,res) => {
     // get the item name
     const itemNameFromUser = req.params.item_name;
@@ -114,17 +115,22 @@ app.delete("/api/items/:item_name", (req,res) => {
         }
     ).catch(
         (err) => {
+            res.status(404).send({msg:"An error has occured!"})
             console.log(err)
         }
     )
 })
 
+// update by id
+app.put("/api/items/:item_id", (req,res) => {
+    // I'm too busy right now so here you go
+    res.status(501).send("Not implemented")
+})
 
 
 
 
 // connect to database & start server
-// ----------------------------------
 const onHttpStart = () => {
     console.log(`Server has started and is listening on port ${HTTP_PORT}`)
 }
