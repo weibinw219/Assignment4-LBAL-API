@@ -51,6 +51,49 @@ app.get("/api/items", (req, res) => {
     
 })
 
+// /api/movies/3
+// --> should return movie with id 3
+app.get("/api/movies/:item_name", (req,res) => {
+    // 1. retrieve the movieID in the url    
+    console.log(req.params)
+    let itemName = req.params.item_name;
+    
+    Item.find().exec().then(
+        (results) => {
+            console.log(results)
+
+            for (let i = 0; i < results.length; i++) {
+                let item = results[i]
+                if (item.item === itemName) {
+                        // 3. if you can find it, then return it
+                    return res.send(item)
+                }
+            }
+
+            res.status(404).send({msg:`Sorry, could not find movie with id: ${item}`}) 
+        }
+    ).catch(
+        (err) => {
+            console.Console(err)
+            
+        }
+    )
+
+
+    // 2. Search your list of movies for a movie that matches that id
+    // get a list of all the parameters in your request
+    for (let i = 0; i < upcomingMovies.length; i++) {
+        let movie = upcomingMovies[i]
+        if (movie.id === id) {
+                // 3. if you can find it, then return it
+            return res.send(movie)
+        }
+    }
+
+    // 4. if you cannot find it, then return an error message & appropriate status code
+    res.status(404).send({msg:`Sorry, could not find movie with id: ${id}`})    
+})
+
 
 
 
