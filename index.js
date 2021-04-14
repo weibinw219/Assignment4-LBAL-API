@@ -7,12 +7,50 @@ const mongoURL = "mongodb+srv://dbUser:0000@cluster0.x7xyu.mongodb.net/LBAL?retr
 // configuration options to use when connecting to the database
 const connectionOptions = {useNewUrlParser: true, useUnifiedTopology: true}
 
+// add your table schemas
+const Schema = mongoose.Schema
+
+const ItemSchema = new Schema({
+   name:String,
+   rarity:String,
+   description:String,
+   goldPerTurn:Number
+})
+const Item = mongoose.model("items_table", ItemSchema)
+
+
 
 // express setup
 const express = require("express");
 const app = express();
 app.use(express.json())
 const HTTP_PORT = process.env.PORT || 8080;
+
+
+
+
+// Url endpoints
+
+// GET ALL
+app.get("/api/items", (req, res) => {
+    Item.find().exec().then(
+        (results) => {
+            console.log(results)
+            res.send(results)
+        }
+    ).catch(
+        (err) => {
+            console.Console(err)
+            
+        }
+    )
+    
+})
+
+
+
+
+
 
 
 
