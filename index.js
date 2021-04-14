@@ -30,6 +30,10 @@ const HTTP_PORT = process.env.PORT || 8080;
 
 
 // Url endpoints
+// Homepage
+app.get("/", (req, res) => {
+    res.send("Welcome to the homepage!")
+})
 
 // GET ALL
 app.get("/api/items", (req, res) => {
