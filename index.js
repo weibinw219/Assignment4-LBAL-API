@@ -16,7 +16,7 @@ const ItemSchema = new Schema({
    description:String,
    goldPerTurn:Number
 })
-const Item = mongoose.model("items_table", ItemSchema)
+const Items = mongoose.model("items_table", ItemSchema)
 
 
 
@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
 
 // GET ALL
 app.get("/api/items", (req, res) => {
-    Item.find().exec().then(
+    Items.find().exec().then(
         (results) => {
             console.log(results)
             res.send(results)
@@ -51,51 +51,73 @@ app.get("/api/items", (req, res) => {
     
 })
 
-// /api/movies/3
-// --> should return movie with id 3
-app.get("/api/movies/:item_name", (req,res) => {
-    // 1. retrieve the movieID in the url    
+
+// get specific item by name
+app.get("/api/items/:item_name", (req,res) => {
+    // retrieve item in the url    
     console.log(req.params)
     let itemName = req.params.item_name;
     
-    Item.find().exec().then(
+    Items.find().exec().then(
         (results) => {
-            console.log(results)
-
             for (let i = 0; i < results.length; i++) {
-                let item = results[i]
-                if (item.item === itemName) {
-                        // 3. if you can find it, then return it
-                    return res.send(item)
+                let singleitem = results[i]
+                // ignore any space between or around the string
+                if (singleitem.name.toLowerCase().split(" ").join("").trim() === itemName.toLowerCase().split(" ").join("").trim()) {
+                    return res.send(singleitem)
                 }
             }
-
-            res.status(404).send({msg:`Sorry, could not find movie with id: ${item}`}) 
+            res.status(404).send({msg:`Sorry, could not find item with name: ${itemName}`})
         }
     ).catch(
         (err) => {
+
             console.Console(err)
             
         }
     )
-
-
-    // 2. Search your list of movies for a movie that matches that id
-    // get a list of all the parameters in your request
-    for (let i = 0; i < upcomingMovies.length; i++) {
-        let movie = upcomingMovies[i]
-        if (movie.id === id) {
-                // 3. if you can find it, then return it
-            return res.send(movie)
-        }
-    }
-
-    // 4. if you cannot find it, then return an error message & appropriate status code
-    res.status(404).send({msg:`Sorry, could not find movie with id: ${id}`})    
+   
 })
 
+// Endpoint to insert a item
+app.post("/api/items", (req, res) => {
+    // 1. GET the body of the request (body of the request = contain the data the user want sto insert)
+    let itemToInsert = req.body
+    console.log(`User wants to insert this data: ${itemToInsert.name}`)
 
+    // error handling
+    // check to see if the body contains a title and descr
+    if ("name" in req.body && "rarity" in req.body) {
+        // 2. INSERT it into the data store (append it to my list of movies)
+        Items.collection(itemToInsert)
+        // 3. RESPOND with a success / error
+        res.status(201).send({"msg":"Item successfully inserted!"})
+    }
+    res.status(401).send({"msg":"Sorry, you are missing a item name or item rarity in your json payload"})    
+})
 
+// endpoint to delete a item
+app.delete("/api/items/:item_name", (req,res) => {
+    // get the item name
+    const itemNameFromUser = req.params.item_name;
+
+    Items.findOneAndDelete({name: itemNameFromUser}).exec().then(
+        (deletedStudent) => {
+            if (deletedStudent === null) {            
+                console.log("Could not find a student to delete")
+                res.send({"msg":"Could not find a student to delete"})
+            }
+            else {
+                console.log("Student has been deleted: " + deletedStudent)
+                res.send({"msg":`Deleted item with name of ${itemNameFromUser}`})
+            } 
+        }
+    ).catch(
+        (err) => {
+            console.log(err)
+        }
+    )
+})
 
 
 
