@@ -90,7 +90,7 @@ app.post("/api/items", (req, res) => {
     // check to see if the body contains a title and descr
     if ("name" in req.body && "rarity" in req.body) {
         // insert it into the data store (append it to my list of movies)
-        Items.collection(itemToInsert)
+        Items.create(itemToInsert)
         // respond with a success / error
         res.status(201).send({"msg":"Item successfully inserted!"})
     }
